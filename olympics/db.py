@@ -4,7 +4,7 @@ import sqlite3
 from pathlib import Path
 
 
-db = Path(__file__).parents[1] / 'database' / 'olympics.db'
+db = Path(__file__).parents[1] / "database" / "olympics.db"
 
 
 def get_connection():
@@ -12,7 +12,7 @@ def get_connection():
     connection = sqlite3.connect(db, detect_types=sqlite3.PARSE_DECLTYPES)
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
-    cursor.execute('PRAGMA foreign_keys')
+    cursor.execute("PRAGMA foreign_keys = on")
     cursor.close()
     return connection
 
@@ -25,16 +25,17 @@ def get_countries(id=None):
     """
     cursor = get_connection().cursor()
     if id is None:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM country
-        ''').fetchall()
+        """).fetchall()
     else:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM country
             WHERE id = ?
-        ''', (id,)).fetchall()
+        """, (id,)
+        ).fetchall()
     cursor.close()
     return rows
 
@@ -47,16 +48,16 @@ def get_athletes(id=None):
     """
     cursor = get_connection().cursor()
     if id is None:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM athlete
-        ''').fetchall()
+        """).fetchall()
     else:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM athlete
             WHERE id = ?
-        ''', (id,)).fetchall()
+        """, (id,)).fetchall()
     cursor.close()
     return rows
 
@@ -69,16 +70,16 @@ def get_disciplines(id=None):
     """
     cursor = get_connection().cursor()
     if id is None:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM discipline
-        ''').fetchall()
+        """).fetchall()
     else:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM discipline
             WHERE id = ?
-        ''', (id,)).fetchall()
+        """, (id,)).fetchall()
     cursor.close()
     return rows
 
@@ -91,16 +92,16 @@ def get_teams(id=None):
     """
     cursor = get_connection().cursor()
     if id is None:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM team
-        ''').fetchall()
+        """).fetchall()
     else:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM team
             WHERE id = ?
-        ''', (id,)).fetchall()
+        """, (id,)).fetchall()
     cursor.close()
     return rows
 
@@ -113,16 +114,16 @@ def get_events(id=None):
     """
     cursor = get_connection().cursor()
     if id is None:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM event
-        ''').fetchall()
+        """).fetchall()
     else:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM event
             WHERE id = ?
-        ''', (id,)).fetchall()
+        """, (id,),).fetchall()
     cursor.close()
     return rows
 
@@ -135,16 +136,17 @@ def get_medals(id=None):
     """
     cursor = get_connection().cursor()
     if id is None:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM medal
-        ''').fetchall()
+        """).fetchall()
     else:
-        rows = cursor.execute('''
+        rows = cursor.execute("""
             SELECT *
             FROM medal
             WHERE id = ?
-        ''', (id,)).fetchall()
+        """, (id,),
+        ).fetchall()
     cursor.close()
     return rows
 
@@ -152,11 +154,12 @@ def get_medals(id=None):
 def get_discipline_athletes(discipline_id):
     """Get athlete ids linked to given discipline id."""
     cursor = get_connection().cursor()
-    rows = cursor.execute('''
+    rows = cursor.execute("""
         SELECT *
         FROM discipline_athlete
         WHERE discipline_id = ?
-    ''', (discipline_id,)).fetchall()
+    """, (discipline_id,),
+    ).fetchall()
     cursor.close()
     return rows
 
@@ -171,12 +174,12 @@ def get_top_countries(top=10):
 
     """
     cursor = get_connection().cursor()
-    rows = cursor.execute('''
+    rows = cursor.execute("""
         SELECT
             country.name,
-            sum(CASE type WHEN 'gold' THEN 1 ELSE 0 END) AS gold,
-            sum(CASE type WHEN 'silver' THEN 1 ELSE 0 END) AS silver,
-            sum(CASE type WHEN 'bronze' THEN 1 ELSE 0 END) AS bronze
+            sum(CASE type WHEN "gold" THEN 1 ELSE 0 END) AS gold,
+            sum(CASE type WHEN "silver" THEN 1 ELSE 0 END) AS silver,
+            sum(CASE type WHEN "bronze" THEN 1 ELSE 0 END) AS bronze
         FROM medal
         LEFT JOIN athlete
         ON medal.athlete_id = athlete.id
@@ -187,7 +190,8 @@ def get_top_countries(top=10):
         GROUP BY country.id
         ORDER BY gold DESC, silver DESC, bronze DESC
         LIMIT ?
-    ''', (10,)).fetchall()
+    """, (top,),
+    ).fetchall()
     cursor.close()
     return rows
 
@@ -200,7 +204,7 @@ def get_collective_medals(team_id=None):
 
     """
     cursor = get_connection().cursor()
-    sql = '''
+    sql = """
         SELECT
             country.name,
             discipline.name AS discipline,
@@ -216,7 +220,7 @@ def get_collective_medals(team_id=None):
         ON medal.event_id = event.id
         JOIN discipline
         ON event.discipline_id = discipline.id
-    '''
+    """
     rows = cursor.execute(sql).fetchall()
     cursor.close()
     return rows
@@ -229,7 +233,7 @@ def get_top_collective(top=10):
 
     """
     cursor = get_connection().cursor()
-    rows = cursor.execute('''
+    rows = cursor.execute("""
         SELECT
             country.name AS country,
             sum(1) AS medals
@@ -241,7 +245,7 @@ def get_top_collective(top=10):
         GROUP BY country
         ORDER BY medals DESC
         LIMIT ?
-    ''', (top,)).fetchall()
+    """, (top,)).fetchall()
     cursor.close()
     return rows
 
@@ -254,7 +258,7 @@ def get_individual_medals(athlete_id=None):
 
     """
     cursor = get_connection().cursor()
-    sql = '''
+    sql = """
         SELECT
             athlete.name,
             country.name AS country,
@@ -271,11 +275,11 @@ def get_individual_medals(athlete_id=None):
         ON medal.event_id = event.id
         JOIN discipline
         ON event.discipline_id = discipline.id
-    '''
+    """
     if athlete_id is None:
         rows = cursor.execute(sql).fetchall()
     else:
-        sql += 'WHERE athlete.id = ?'
+        sql += "WHERE athlete.id = ?"
         rows = cursor.execute(sql, (athlete_id,)).fetchall()
     cursor.close()
     return rows
@@ -288,7 +292,7 @@ def get_top_individual(top=10):
 
     """
     cursor = get_connection().cursor()
-    rows = cursor.execute('''
+    rows = cursor.execute("""
         SELECT
             athlete.name,
             athlete.gender,
@@ -302,6 +306,7 @@ def get_top_individual(top=10):
         GROUP BY athlete.name, country
         ORDER BY medals DESC
         LIMIT ?
-    ''', (top,)).fetchall()
+    """, (top,)
+    ).fetchall()
     cursor.close()
     return rows
