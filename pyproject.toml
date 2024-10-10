@@ -10,3 +10,13 @@ dependencies = [
   'rich',
   'fastapi[standard]',
 ]
+
+
+[tool.pytest.ini_options]
+addopts = "-ra -v --cov --cov-report=term-missing"
+
+[tool.coverage.run]
+include = ['olympics/*', 'tests/*']
+
+[tool.coverage.report]
+exclude_lines = ['pragma: no cover']
