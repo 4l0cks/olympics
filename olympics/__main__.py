@@ -22,15 +22,15 @@ parser.add_argument(
 
 def main(argv=None):
     args = parser.parse_args(argv)
-    if (top := int(args.top)) <= 0:
-        raise argparse.ArgumentTypeError(f'{top} is not a positive number')
+    if (top := int(args.top)) < 0:
+        raise argparse.ArgumentTypeError(f'{top} is not a positive number') #this line was a miss i had to implement a test to trigger the coverage on it
     match args.command:
         case 'countries':
-            cli.top_countries(top)
+            cli.top_countries(top) #was a miss
         case 'collective':
-            cli.top_collective(top)
+            cli.top_collective(top) #was a miss
         case 'individual':
-            cli.top_individual(top)
+            cli.top_individual(top) #was a miss
 
 
 if __name__ == '__main__':  # pragma: no cover

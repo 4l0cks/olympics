@@ -278,3 +278,28 @@ méthodes pour s’assurer que le code suit toujours ces bonnes pratiques.
 
 Si vous avez des réponses à écrire, des remarques à faire sur votre travail,
 ajoutez-les à la fin de ce fichier.
+
+## Réponses 
+
+7. C'est une injection de dépendance. Cette injection permet d'injecter la destination de sortie dans la fonction
+ce qui la rend plus flexible et permet de capturer la sortie sans l'afficher dans la console pour les tests. 
+Cela rend le processus de test plus simple.
+
+8. Le commentaire permet de dire à l'outil de couverture de ne pas inclure la ligne qui contient le commentaire
+dans le rapport de couverture.C'est utile pour éviter de couvrir du code déprécié, du code qui ne doit pas être testé
+ou dans d'autres cas.
+
+9. Il n'est pas suffisant d'avoir cette couverture à 100%, elle ne couvre pas les problèmes de lisibilité ou de performance
+par exemple. Pour garantir une meilleure profondeur et qualité, on pourrait effectuer:
+_ des tests unitaires
+_ des tests d'intégration
+_ des tests fonctionnels
+_ des tests de performance
+_des tests de régression
+_des tests de sécurité
+_des tests end-to-end
+
+10. On souhaitait valider chaque module séparément, voir facilement les bugs un à un et consolider le code progressivement sans
+être perdu. Les regrouper permet de documenter efficacement la correction, assurer une certaine lisibilité et traçabilité des
+actions effectuées dans le projet, il permet également d'avoir une certaine sécurité en voyant que le bug a été testé et factuellement
+résolu. 
